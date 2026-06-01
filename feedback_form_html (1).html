@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tell us about your visit</title>
+  <style>
+    :root {
+      --teal: #004f55;
+      --green: #0b8f3a;
+      --soft-red: #ffd8d8;
+      --soft-red-border: #f2aaaa;
+      --soft-amber: #ffe9a8;
+      --soft-amber-border: #e4c36b;
+      --soft-green: #d9f0d6;
+      --soft-green-border: #9acb96;
+      --border: #d9e1e8;
+      --text: #111;
+      --muted: #6f7d85;
+      --bg: #f7f9fa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1040px;
+      margin: 0 auto;
+      background: white;
+      min-height: 100vh;
+      padding: 16px 40px 28px;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+
+    .progress {
+      height: 8px;
+      background: #d8dee6;
+      margin: 0 -40px 28px;
+    }
+
+    .progress div {
+      width: 62%;
+      height: 100%;
+      background: #27b34a;
+    }
+
+    .required {
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    h1, h2 {
+      color: var(--teal);
+      margin: 0 0 18px;
+      line-height: 1.2;
+    }
+
+    h1 { font-size: 26px; }
+    h2 { font-size: 22px; margin-top: 28px; }
+
+    .question { margin-bottom: 26px; }
+
+    .scale-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      margin: 8px 56px 10px 0;
+      gap: 20px;
+    }
+
+    .scale-labels .low { color: #cf1111; }
+    .scale-labels .high { color: #006f26; }
+
+    .scale-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: 7fr 2fr 2fr;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      min-height: 42px;
+    }
+
+    .group {
+      display: grid;
+      min-width: 0;
+    }
+
+    .group.red { grid-template-columns: repeat(7, 1fr); }
+    .group.amber { grid-template-columns: repeat(2, 1fr); }
+    .group.green { grid-template-columns: repeat(2, 1fr); }
+
+    .rating {
+      border: 0;
+      border-right: 1px solid rgba(255,255,255,0.9);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 42px;
+    }
+
+    .red .rating { background: var(--soft-red); border-color: var(--soft-red-border); }
+    .amber .rating { background: var(--soft-amber); border-color: var(--soft-amber-border); }
+    .green .rating { background: var(--soft-green); border-color: var(--soft-green-border); }
+
+    .rating:hover, .rating.selected {
+      filter: saturate(1.4) brightness(0.92);
+      outline: 3px solid rgba(0, 79, 85, 0.35);
+      outline-offset: -3px;
+    }
+
+    .na-wrap {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    .radio-dot {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #aeb8c2;
+      border-radius: 50%;
+      background: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .radio-dot.selected::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid #aeb8c2;
+      border-radius: 4px;
+      padding: 12px;
+      font: inherit;
+      resize: vertical;
+      min-height: 56px;
+    }
+
+    .grid-section {
+      margin-top: 12px;
+    }
+
+    .grid-row {
+      display: grid;
+      grid-template-columns: 245px 1fr auto;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+
+    .row-label { font-size: 17px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 54px;
+      border-top: 0;
+      margin-top: 18px;
+    }
+
+    .choice-list { display: grid; gap: 8px; }
+
+    .choice {
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      cursor: pointer;
+      background: white;
+      font-size: 16px;
+    }
+
+    .choice:hover, .choice.selected {
+      border-color: var(--teal);
+      background: #f2fbfb;
+    }
+
+    .choice .radio-dot { width: 24px; height: 24px; }
+    .choice .radio-dot.selected::after { width: 12px; height: 12px; }
+
+    .product-choice-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin: 8px 0 22px;
+    }
+
+    .thank-you {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .thank-you strong { color: var(--teal); }
+
+    .submit-bar {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .submit-btn, .clear-btn {
+      border: 0;
+      border-radius: 6px;
+      padding: 12px 26px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .submit-btn { background: var(--teal); color: white; }
+    .clear-btn { background: #e8eef2; color: #263238; }
+
+    .status {
+      text-align: center;
+      margin-top: 12px;
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    @media (max-width: 780px) {
+      .page { padding: 14px 18px 28px; }
+      .progress { margin: 0 -18px 24px; }
+      h1 { font-size: 22px; }
+      h2 { font-size: 19px; }
+      .scale-labels { margin-right: 0; font-size: 13px; }
+      .scale-row { grid-template-columns: 1fr; gap: 8px; }
+      .na-wrap { justify-content: flex-end; }
+      .grid-row { grid-template-columns: 1fr; gap: 6px; }
+      .two-col { grid-template-columns: 1fr; gap: 22px; }
+      .product-choice-row { grid-template-columns: 1fr; gap: 8px; }
+      .rating { font-size: 15px; min-height: 38px; }
+      .scale { min-height: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="progress"><div></div></div>
+    <div class="required">→ Required</div>
+
+    <form id="feedbackForm">
+      <section class="question">
+        <h1>1. If a mate asked whether they should shop here, what would you say?</h1>
+        <div class="scale-labels">
+          <span><strong class="low">0</strong> = I’d tell them not to bother</span>
+          <span><strong class="high">10</strong> = I’d tell them to come here</span>
+        </div>
+        <div data-scale="recommend"></div>
+        <label for="reason">What made you choose that score?</label>
+        <textarea id="reason" name="reason"></textarea>
+      </section>
+
+      <section class="question">
+        <h2>2. Thinking about your visit today, where would you place it on the scale below?</h2>
+        <div class="scale-labels">
+          <span><strong class="low">0</strong> = Couldn’t have gone much worse</span>
+          <span><strong class="high">10</strong> = Couldn’t have gone much better</span>
+        </div>
+        <div data-scale="overallExperience"></div>
+      </section>
+
+      <section class="question">
+        <h2>3. Thinking about your visit today, how would you rate the following?</h2>
+        <div class="scale-labels">
+          <span><strong class="low">Couldn’t have</strong> gone much worse</span>
+          <span><strong class="high">Couldn’t have</strong> gone much better</span>
+        </div>
+        <div class="grid-section">
+          <div class="grid-row"><div class="row-label">Finding what you needed</div><div data-scale="findingNeeded" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Checkout experience</div><div data-scale="checkoutExperience" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Checkout wait time</div><div data-scale="checkoutWait" data-compact="true"></div></div>
+        </div>
+      </section>
+
+      <section class="question two-col">
+        <div>
+          <h2>4. Did you need help from a team member during your visit?</h2>
+          <div data-choice="neededHelp" data-options="Yes,No"></div>
+        </div>
+        <div>
+          <h2>5. If you needed help, were you able to get it?</h2>
+          <div data-choice="gotHelp" data-options="Yes,No,Not applicable"></div>
+        </div>
+      </section>
+
+      <section class="question">
+        <h2>6. Thinking about any team members you interacted with today, how would you rate them in the following areas?</h2>
+        <div class="scale-labels">
+          <span></span>
+          <span><strong class="high">Couldn’t have</strong> gone much better</span>
+        </div>
+        <div class="grid-section">
+          <div class="grid-row"><div class="row-label">Made you feel welcome and valued</div><div data-scale="welcomeValued" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Knew their stuff</div><div data-scale="knewStuff" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Helpful</div><div data-scale="helpful" data-compact="true"></div></div>
+        </div>
+      </section>
+
+      <section class="question">
+        <h2>7. Thinking about the products available today, how would you rate the following?</h2>
+        <div class="scale-labels">
+          <span><strong class="low">Couldn’t have</strong> gone much worse</span>
+          <span><strong class="high">Couldn’t have</strong> gone much better</span>
+        </div>
+        <div class="grid-section">
+          <div class="grid-row"><div class="row-label">Range of products available</div><div data-scale="productRange" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Value for money</div><div data-scale="valueForMoney" data-compact="true"></div></div>
+          <div class="grid-row"><div class="row-label">Product availability</div><div data-scale="productAvailability" data-compact="true"></div></div>
+        </div>
+        <p>Were you able to find the product(s) you came in for?</p>
+        <div data-choice="foundProducts" data-options="Yes,No,Partly" class="product-choice-row"></div>
+      </section>
+
+      <section class="question">
+        <h2>8. Anything else you’d like us to know?</h2>
+        <textarea id="extraComments" name="extraComments"></textarea>
+      </section>
+
+      <div class="submit-bar">
+        <button type="submit" class="submit-btn">Submit feedback</button>
+        <button type="button" class="clear-btn" id="clearBtn">Clear form</button>
+      </div>
+      <div id="status" class="status" aria-live="polite"></div>
+    </form>
+
+    <p class="thank-you"><strong>Thank you!</strong> Your comments help us recognise what’s working well and where we can improve.</p>
+  </main>
+
+  <script>
+    const formState = {};
+
+    function createScale(container) {
+      const name = container.dataset.scale;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'scale-row';
+
+      const scale = document.createElement('div');
+      scale.className = 'scale';
+
+      const groups = [
+        { className: 'red', values: [0, 1, 2, 3, 4, 5, 6] },
+        { className: 'amber', values: [7, 8] },
+        { className: 'green', values: [9, 10] }
+      ];
+
+      groups.forEach(group => {
+        const groupEl = document.createElement('div');
+        groupEl.className = `group ${group.className}`;
+        group.values.forEach(value => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'rating';
+          button.textContent = value;
+          button.addEventListener('click', () => {
+            formState[name] = value;
+            container.querySelectorAll('.rating, .radio-dot').forEach(el => el.classList.remove('selected'));
+            button.classList.add('selected');
+          });
+          groupEl.appendChild(button);
+        });
+        scale.appendChild(groupEl);
+      });
+
+      const naWrap = document.createElement('div');
+      naWrap.className = 'na-wrap';
+      naWrap.innerHTML = '<span>N/A</span>';
+      const na = document.createElement('button');
+      na.type = 'button';
+      na.className = 'radio-dot';
+      na.setAttribute('aria-label', `${name} not applicable`);
+      na.addEventListener('click', () => {
+        formState[name] = 'N/A';
+        container.querySelectorAll('.rating, .radio-dot').forEach(el => el.classList.remove('selected'));
+        na.classList.add('selected');
+      });
+      naWrap.appendChild(na);
+
+      wrapper.appendChild(scale);
+      wrapper.appendChild(naWrap);
+      container.appendChild(wrapper);
+    }
+
+    function createChoices(container) {
+      const name = container.dataset.choice;
+      const options = container.dataset.options.split(',');
+      const list = document.createElement('div');
+      list.className = container.classList.contains('product-choice-row') ? 'product-choice-row' : 'choice-list';
+
+      options.forEach(option => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'choice';
+        item.innerHTML = `<span>${option}</span><span class="radio-dot"></span>`;
+        item.addEventListener('click', () => {
+          formState[name] = option;
+          list.querySelectorAll('.choice, .radio-dot').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          item.querySelector('.radio-dot').classList.add('selected');
+        });
+        list.appendChild(item);
+      });
+
+      container.replaceWith(list);
+      list.dataset.choice = name;
+    }
+
+    document.querySelectorAll('[data-scale]').forEach(createScale);
+    document.querySelectorAll('[data-choice]').forEach(createChoices);
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      Object.keys(formState).forEach(key => delete formState[key]);
+      document.getElementById('feedbackForm').reset();
+      document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+      document.getElementById('status').textContent = '';
+    });
+
+    document.getElementById('feedbackForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const payload = {
+        submittedAt: new Date().toISOString(),
+        ...formState,
+        reason: document.getElementById('reason').value.trim(),
+        extraComments: document.getElementById('extraComments').value.trim()
+      };
+
+      console.log('Feedback payload:', payload);
+
+      // Replace this URL with your Google Apps Script Web App URL when ready.
+      const SCRIPT_URL = '';
+
+      if (!SCRIPT_URL) {
+        document.getElementById('status').textContent = 'Form captured locally. Add your Google Apps Script URL to send it to a Sheet.';
+        return;
+      }
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        document.getElementById('status').textContent = 'Thanks, your feedback has been submitted.';
+        document.getElementById('feedbackForm').reset();
+        Object.keys(formState).forEach(key => delete formState[key]);
+        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+      } catch (error) {
+        document.getElementById('status').textContent = 'Something went wrong. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>
