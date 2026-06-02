@@ -6,18 +6,13 @@
   <title>Tell us about your visit</title>
   <style>
     :root {
-      --teal: #004f55;
-      --green: #0b8f3a;
-      --soft-red: #ffd8d8;
-      --soft-red-border: #f2aaaa;
-      --soft-amber: #ffe9a8;
-      --soft-amber-border: #e4c36b;
-      --soft-green: #d9f0d6;
-      --soft-green-border: #9acb96;
-      --border: #d9e1e8;
-      --text: #111;
-      --muted: #6f7d85;
-      --bg: #f7f9fa;
+      --green: #004f3f;
+      --green-2: #00644f;
+      --border: #d9dfe3;
+      --bg: #f6f7f6;
+      --red: #f7aaa2;
+      --orange: #ffd08a;
+      --nps-green: #bfe1ae;
     }
 
     * { box-sizing: border-box; }
@@ -26,462 +21,513 @@
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
-      color: var(--text);
+      color: #111;
     }
 
-    .page {
-      max-width: 1040px;
-      margin: 0 auto;
-      background: white;
+    .app {
+      max-width: 520px;
       min-height: 100vh;
-      padding: 16px 40px 28px;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
+      margin: 0 auto;
+      background: #fff;
+      padding: 18px 18px 28px;
+    }
+
+    .step-count {
+      text-align: center;
+      font-weight: 700;
+      margin: 0 0 10px;
     }
 
     .progress {
       height: 8px;
-      background: #d8dee6;
-      margin: 0 -40px 28px;
+      background: #d6d6d6;
+      border-radius: 100px;
+      overflow: hidden;
+      margin: 0 0 34px;
     }
 
-    .progress div {
-      width: 62%;
+    .progress-fill {
       height: 100%;
-      background: #27b34a;
+      width: 33.333%;
+      background: var(--green);
+      border-radius: 100px;
+      transition: width 0.25s ease;
     }
 
-    .required {
-      color: var(--teal);
-      font-weight: 700;
-      margin-bottom: 12px;
+    .page {
+      display: none;
+      animation: fade 0.18s ease;
     }
 
-    h1, h2 {
-      color: var(--teal);
-      margin: 0 0 18px;
-      line-height: 1.2;
+    .page.active { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    h1 { font-size: 26px; }
-    h2 { font-size: 22px; margin-top: 28px; }
+    h1 {
+      color: var(--green);
+      font-size: 30px;
+      line-height: 1.15;
+      margin: 0 0 12px;
+    }
 
-    .question { margin-bottom: 26px; }
+    h2 {
+      color: var(--green);
+      font-size: 23px;
+      line-height: 1.25;
+      margin: 26px 0 16px;
+    }
 
-    .scale-labels {
+    p {
+      font-size: 17px;
+      line-height: 1.45;
+      margin: 0 0 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 15px;
+      margin: 0 0 7px;
+    }
+
+    .optional {
+      color: var(--green);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin: 28px 0 8px;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #cfd6dc;
+      border-radius: 7px;
+      padding: 13px 14px;
+      font: inherit;
+      font-size: 16px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    .divider {
+      height: 1px;
+      background: #e2e5e8;
+      margin: 24px 0;
+    }
+
+    .question { margin-bottom: 24px; }
+
+    .scale-heading {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      font-size: 15px;
-      margin: 8px 56px 10px 0;
-      gap: 20px;
-    }
-
-    .scale-labels .low { color: #cf1111; }
-    .scale-labels .high { color: #006f26; }
-
-    .scale-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 14px;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 8px;
     }
 
     .scale {
       display: grid;
-      grid-template-columns: 7fr 2fr 2fr;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      min-height: 42px;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 3px;
+      margin-bottom: 8px;
     }
 
-    .group {
-      display: grid;
-      min-width: 0;
-    }
-
-    .group.red { grid-template-columns: repeat(7, 1fr); }
-    .group.amber { grid-template-columns: repeat(2, 1fr); }
-    .group.green { grid-template-columns: repeat(2, 1fr); }
-
-    .rating {
+    .score {
       border: 0;
-      border-right: 1px solid rgba(255,255,255,0.9);
-      font-size: 18px;
-      font-weight: 700;
+      border-radius: 4px;
+      min-height: 40px;
+      font-size: 16px;
       cursor: pointer;
-      min-height: 42px;
+      color: #111;
     }
 
-    .red .rating { background: var(--soft-red); border-color: var(--soft-red-border); }
-    .amber .rating { background: var(--soft-amber); border-color: var(--soft-amber-border); }
-    .green .rating { background: var(--soft-green); border-color: var(--soft-green-border); }
+    .score.red { background: var(--red); }
+    .score.orange { background: var(--orange); }
+    .score.green { background: var(--nps-green); }
 
-    .rating:hover, .rating.selected {
-      filter: saturate(1.4) brightness(0.92);
-      outline: 3px solid rgba(0, 79, 85, 0.35);
-      outline-offset: -3px;
+    .score.selected {
+      outline: 3px solid var(--green);
+      outline-offset: 1px;
+      font-weight: 800;
+      filter: saturate(1.15);
     }
 
-    .na-wrap {
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 14px;
+      margin: 26px 0 26px;
+      font-size: 14px;
+      align-items: center;
+    }
+
+    .legend-item {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
+      justify-content: center;
       white-space: nowrap;
-      font-size: 14px;
     }
 
-    .radio-dot {
-      width: 28px;
-      height: 28px;
-      border: 2px solid #aeb8c2;
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .swatch.red { background: var(--red); }
+    .swatch.orange { background: var(--orange); }
+    .swatch.green { background: var(--nps-green); }
+
+    .choice-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .choice {
+      width: 100%;
+      min-height: 62px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      text-align: left;
+      padding: 0 18px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .choice.selected {
+      border-color: var(--green);
+      background: #edf8f3;
+      font-weight: 700;
+    }
+
+    .trophy-wrap {
+      text-align: center;
+      margin: 10px 0 24px;
+    }
+
+    .trophy {
+      width: 132px;
+      height: 132px;
       border-radius: 50%;
-      background: white;
+      background: #eef4ed;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      font-size: 72px;
+      margin-bottom: 16px;
     }
 
-    .radio-dot.selected::after {
-      content: "";
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--teal);
-    }
-
-    textarea, input[type="text"] {
-      width: 100%;
-      border: 1px solid #aeb8c2;
-      border-radius: 4px;
-      padding: 12px;
-      font: inherit;
-      resize: vertical;
-      min-height: 56px;
-    }
-
-    .grid-section {
-      margin-top: 12px;
-    }
-
-    .grid-row {
-      display: grid;
-      grid-template-columns: 245px 1fr auto;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 10px;
-    }
-
-    .row-label { font-size: 17px; }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 54px;
-      border-top: 0;
-      margin-top: 18px;
-    }
-
-    .choice-list { display: grid; gap: 8px; }
-
-    .choice {
-      min-height: 44px;
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px;
-      cursor: pointer;
-      background: white;
-      font-size: 16px;
-    }
-
-    .choice:hover, .choice.selected {
-      border-color: var(--teal);
-      background: #f2fbfb;
-    }
-
-    .choice .radio-dot { width: 24px; height: 24px; }
-    .choice .radio-dot.selected::after { width: 12px; height: 12px; }
-
-    .product-choice-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
-      margin: 8px 0 22px;
-    }
-
-    .thank-you {
+    .thanks-box {
+      background: #eef7f1;
+      margin: 28px -18px 22px;
+      padding: 28px 20px;
       text-align: center;
-      margin-top: 20px;
-      font-size: 16px;
     }
 
-    .thank-you strong { color: var(--teal); }
+    .thanks-box .heart {
+      color: var(--green);
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
 
-    .submit-bar {
-      margin-top: 24px;
+    .thanks-box strong {
+      display: block;
+      color: var(--green);
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .nav {
       display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
     }
 
-    .submit-btn, .clear-btn {
+    .btn {
+      flex: 1;
       border: 0;
-      border-radius: 6px;
-      padding: 12px 26px;
-      font-size: 16px;
-      font-weight: 700;
+      border-radius: 7px;
+      min-height: 58px;
+      font-size: 21px;
+      font-weight: 800;
       cursor: pointer;
     }
 
-    .submit-btn { background: var(--teal); color: white; }
-    .clear-btn { background: #e8eef2; color: #263238; }
+    .btn.primary {
+      background: linear-gradient(90deg, var(--green), var(--green-2));
+      color: #fff;
+    }
+
+    .btn.secondary {
+      background: #e8ecef;
+      color: #1f2a31;
+    }
 
     .status {
       text-align: center;
-      margin-top: 12px;
-      color: var(--teal);
+      color: var(--green);
       font-weight: 700;
+      margin-top: 14px;
+      min-height: 22px;
     }
 
-    @media (max-width: 780px) {
-      .page { padding: 14px 18px 28px; }
-      .progress { margin: 0 -18px 24px; }
-      h1 { font-size: 22px; }
-      h2 { font-size: 19px; }
-      .scale-labels { margin-right: 0; font-size: 13px; }
-      .scale-row { grid-template-columns: 1fr; gap: 8px; }
-      .na-wrap { justify-content: flex-end; }
-      .grid-row { grid-template-columns: 1fr; gap: 6px; }
-      .two-col { grid-template-columns: 1fr; gap: 22px; }
-      .product-choice-row { grid-template-columns: 1fr; gap: 8px; }
-      .rating { font-size: 15px; min-height: 38px; }
-      .scale { min-height: 38px; }
+    @media (min-width: 700px) {
+      body { padding: 20px 0; }
+      .app {
+        border: 1px solid #e0e4e7;
+        border-radius: 14px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+        min-height: auto;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <div class="progress"><div></div></div>
-    <div class="required">→ Required</div>
+  <main class="app">
+    <div class="step-count" id="stepCount">1 of 3</div>
+    <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
 
     <form id="feedbackForm">
-      <section class="question">
-        <h1>1. If a mate asked whether they should shop here, what would you say?</h1>
-        <div class="scale-labels">
-          <span><strong class="low">0</strong> = I’d tell them not to bother</span>
-          <span><strong class="high">10</strong> = I’d tell them to come here</span>
+      <section class="page active" data-page="1">
+        <h1>Tell us about your visit</h1>
+        <p>Your feedback helps us improve every day.</p>
+
+        <div class="optional">OPTIONAL</div>
+
+        <div class="field">
+          <label for="customerName">Your name (optional)</label>
+          <input id="customerName" name="customerName" type="text" placeholder="Enter your name" autocomplete="name" />
         </div>
-        <div data-scale="recommend"></div>
-        <label for="reason">What made you choose that score?</label>
-        <textarea id="reason" name="reason"></textarea>
+
+        <div class="field">
+          <label for="customerEmail">Your email (optional)</label>
+          <input id="customerEmail" name="customerEmail" type="email" placeholder="Enter your email" autocomplete="email" />
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <h2>Were you acknowledged by a team member while in store?</h2>
+          <div class="scale-heading">
+            <span>Not at all</span>
+            <span>Straight away</span>
+          </div>
+          <div class="scale" data-scale="acknowledged"></div>
+        </div>
+
+        <div class="question">
+          <h2>Treated you like a valued customer?</h2>
+          <div class="scale-heading">
+            <span>Not at all</span>
+            <span>Absolutely</span>
+          </div>
+          <div class="scale" data-scale="valuedCustomer"></div>
+        </div>
+
+        <div class="question">
+          <h2>Ease of checkout?</h2>
+          <div class="scale-heading">
+            <span>Very frustrating</span>
+            <span>Very easy</span>
+          </div>
+          <div class="scale" data-scale="checkoutEase"></div>
+        </div>
+
+        <div class="legend" aria-label="NPS colour legend">
+          <div class="legend-item"><span class="swatch red"></span><span>0-6 Detractor</span></div>
+          <div class="legend-item"><span class="swatch orange"></span><span>7-8 Passive</span></div>
+          <div class="legend-item"><span class="swatch green"></span><span>9-10 Promoter</span></div>
+        </div>
+
+        <div class="nav">
+          <button type="button" class="btn primary" data-next>Next →</button>
+        </div>
       </section>
 
-      <section class="question">
-        <h2>2. Thinking about your visit today, where would you place it on the scale below?</h2>
-        <div class="scale-labels">
-          <span><strong class="low">0</strong> = Couldn’t have gone much worse</span>
-          <span><strong class="high">10</strong> = Couldn’t have gone much better</span>
-        </div>
-        <div data-scale="overallExperience"></div>
-      </section>
+      <section class="page" data-page="2">
+        <h2>Did you need help from a team member during your visit?</h2>
+        <div class="choice-list" data-choice="neededHelp" data-options="Yes,No"></div>
 
-      <section class="question">
-        <h2>3. Thinking about your visit today, how would you rate the following?</h2>
-        <div class="scale-labels">
-          <span><strong class="low">Couldn’t have</strong> gone much worse</span>
-          <span><strong class="high">Couldn’t have</strong> gone much better</span>
-        </div>
-        <div class="grid-section">
-          <div class="grid-row"><div class="row-label">Finding what you needed</div><div data-scale="findingNeeded" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Checkout experience</div><div data-scale="checkoutExperience" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Checkout wait time</div><div data-scale="checkoutWait" data-compact="true"></div></div>
-        </div>
-      </section>
+        <div class="divider"></div>
 
-      <section class="question two-col">
-        <div>
-          <h2>4. Did you need help from a team member during your visit?</h2>
-          <div data-choice="neededHelp" data-options="Yes,No"></div>
-        </div>
-        <div>
-          <h2>5. If you needed help, were you able to get it?</h2>
-          <div data-choice="gotHelp" data-options="Yes,No,Not applicable"></div>
+        <h2>If you needed help, were you able to get it?</h2>
+        <div class="choice-list" data-choice="gotHelp" data-options="Yes,No,Not applicable"></div>
+
+        <div class="divider"></div>
+
+        <h2>Anything else you’d like us to know?</h2>
+        <textarea id="extraComments" name="extraComments" placeholder="Share any additional comments..."></textarea>
+
+        <div class="nav">
+          <button type="button" class="btn secondary" data-back>← Back</button>
+          <button type="button" class="btn primary" data-next>Next →</button>
         </div>
       </section>
 
-      <section class="question">
-        <h2>6. Thinking about any team members you interacted with today, how would you rate them in the following areas?</h2>
-        <div class="scale-labels">
-          <span></span>
-          <span><strong class="high">Couldn’t have</strong> gone much better</span>
+      <section class="page" data-page="3">
+        <div class="trophy-wrap">
+          <div class="trophy" aria-hidden="true">🏆</div>
+          <h1>Recognise a Team Member</h1>
+          <p>Did somebody provide great service today?</p>
         </div>
-        <div class="grid-section">
-          <div class="grid-row"><div class="row-label">Made you feel welcome and valued</div><div data-scale="welcomeValued" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Knew their stuff</div><div data-scale="knewStuff" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Helpful</div><div data-scale="helpful" data-compact="true"></div></div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label for="teamMemberName"><strong>Team member name</strong></label>
+          <input id="teamMemberName" name="teamMemberName" type="text" placeholder="Enter their name" />
+        </div>
+
+        <div class="field">
+          <label for="recognitionComment"><strong>What did they do that stood out?</strong></label>
+          <textarea id="recognitionComment" name="recognitionComment" placeholder="Tell us what they did and how they helped..."></textarea>
+        </div>
+
+        <div class="thanks-box">
+          <div class="heart">♥</div>
+          <strong>Thank you for your feedback!</strong>
+          <p>It helps us recognise what’s working well and where we can improve.</p>
+        </div>
+
+        <div class="nav">
+          <button type="button" class="btn secondary" data-back>← Back</button>
+          <button type="submit" class="btn primary">Submit Feedback</button>
         </div>
       </section>
 
-      <section class="question">
-        <h2>7. Thinking about the products available today, how would you rate the following?</h2>
-        <div class="scale-labels">
-          <span><strong class="low">Couldn’t have</strong> gone much worse</span>
-          <span><strong class="high">Couldn’t have</strong> gone much better</span>
-        </div>
-        <div class="grid-section">
-          <div class="grid-row"><div class="row-label">Range of products available</div><div data-scale="productRange" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Value for money</div><div data-scale="valueForMoney" data-compact="true"></div></div>
-          <div class="grid-row"><div class="row-label">Product availability</div><div data-scale="productAvailability" data-compact="true"></div></div>
-        </div>
-        <p>Were you able to find the product(s) you came in for?</p>
-        <div data-choice="foundProducts" data-options="Yes,No,Partly" class="product-choice-row"></div>
-      </section>
-
-      <section class="question">
-        <h2>8. Anything else you’d like us to know?</h2>
-        <textarea id="extraComments" name="extraComments"></textarea>
-      </section>
-
-      <div class="submit-bar">
-        <button type="submit" class="submit-btn">Submit feedback</button>
-        <button type="button" class="clear-btn" id="clearBtn">Clear form</button>
-      </div>
-      <div id="status" class="status" aria-live="polite"></div>
+      <div class="status" id="status" aria-live="polite"></div>
     </form>
-
-    <p class="thank-you"><strong>Thank you!</strong> Your comments help us recognise what’s working well and where we can improve.</p>
   </main>
 
   <script>
-    const formState = {};
+    const SCRIPT_URL = ""; // Paste your Google Apps Script Web App URL between the quotes.
+    const state = {};
+    let currentPage = 1;
 
-    function createScale(container) {
-      const name = container.dataset.scale;
-      const wrapper = document.createElement('div');
-      wrapper.className = 'scale-row';
+    function colourClass(value) {
+      if (value <= 6) return "red";
+      if (value <= 8) return "orange";
+      return "green";
+    }
 
-      const scale = document.createElement('div');
-      scale.className = 'scale';
+    function createScales() {
+      document.querySelectorAll("[data-scale]").forEach(scale => {
+        const name = scale.dataset.scale;
 
-      const groups = [
-        { className: 'red', values: [0, 1, 2, 3, 4, 5, 6] },
-        { className: 'amber', values: [7, 8] },
-        { className: 'green', values: [9, 10] }
-      ];
+        for (let i = 0; i <= 10; i++) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `score ${colourClass(i)}`;
+          button.textContent = i;
 
-      groups.forEach(group => {
-        const groupEl = document.createElement('div');
-        groupEl.className = `group ${group.className}`;
-        group.values.forEach(value => {
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'rating';
-          button.textContent = value;
-          button.addEventListener('click', () => {
-            formState[name] = value;
-            container.querySelectorAll('.rating, .radio-dot').forEach(el => el.classList.remove('selected'));
-            button.classList.add('selected');
+          button.addEventListener("click", () => {
+            state[name] = i;
+            scale.querySelectorAll(".score").forEach(btn => btn.classList.remove("selected"));
+            button.classList.add("selected");
           });
-          groupEl.appendChild(button);
-        });
-        scale.appendChild(groupEl);
-      });
 
-      const naWrap = document.createElement('div');
-      naWrap.className = 'na-wrap';
-      naWrap.innerHTML = '<span>N/A</span>';
-      const na = document.createElement('button');
-      na.type = 'button';
-      na.className = 'radio-dot';
-      na.setAttribute('aria-label', `${name} not applicable`);
-      na.addEventListener('click', () => {
-        formState[name] = 'N/A';
-        container.querySelectorAll('.rating, .radio-dot').forEach(el => el.classList.remove('selected'));
-        na.classList.add('selected');
+          scale.appendChild(button);
+        }
       });
-      naWrap.appendChild(na);
-
-      wrapper.appendChild(scale);
-      wrapper.appendChild(naWrap);
-      container.appendChild(wrapper);
     }
 
-    function createChoices(container) {
-      const name = container.dataset.choice;
-      const options = container.dataset.options.split(',');
-      const list = document.createElement('div');
-      list.className = container.classList.contains('product-choice-row') ? 'product-choice-row' : 'choice-list';
+    function createChoices() {
+      document.querySelectorAll("[data-choice]").forEach(list => {
+        const name = list.dataset.choice;
+        const options = list.dataset.options.split(",");
 
-      options.forEach(option => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'choice';
-        item.innerHTML = `<span>${option}</span><span class="radio-dot"></span>`;
-        item.addEventListener('click', () => {
-          formState[name] = option;
-          list.querySelectorAll('.choice, .radio-dot').forEach(el => el.classList.remove('selected'));
-          item.classList.add('selected');
-          item.querySelector('.radio-dot').classList.add('selected');
+        options.forEach(option => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "choice";
+          button.textContent = option;
+
+          button.addEventListener("click", () => {
+            state[name] = option;
+            list.querySelectorAll(".choice").forEach(btn => btn.classList.remove("selected"));
+            button.classList.add("selected");
+          });
+
+          list.appendChild(button);
         });
-        list.appendChild(item);
       });
-
-      container.replaceWith(list);
-      list.dataset.choice = name;
     }
 
-    document.querySelectorAll('[data-scale]').forEach(createScale);
-    document.querySelectorAll('[data-choice]').forEach(createChoices);
+    function showPage(page) {
+      currentPage = page;
+      document.querySelectorAll(".page").forEach(section => {
+        section.classList.toggle("active", Number(section.dataset.page) === page);
+      });
 
-    document.getElementById('clearBtn').addEventListener('click', () => {
-      Object.keys(formState).forEach(key => delete formState[key]);
-      document.getElementById('feedbackForm').reset();
-      document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-      document.getElementById('status').textContent = '';
+      document.getElementById("stepCount").textContent = `${page} of 3`;
+      document.getElementById("progressFill").style.width = `${(page / 3) * 100}%`;
+      document.getElementById("status").textContent = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("click", event => {
+      if (event.target.matches("[data-next]")) showPage(Math.min(3, currentPage + 1));
+      if (event.target.matches("[data-back]")) showPage(Math.max(1, currentPage - 1));
     });
 
-    document.getElementById('feedbackForm').addEventListener('submit', async (event) => {
+    document.getElementById("feedbackForm").addEventListener("submit", async event => {
       event.preventDefault();
 
       const payload = {
         submittedAt: new Date().toISOString(),
-        ...formState,
-        reason: document.getElementById('reason').value.trim(),
-        extraComments: document.getElementById('extraComments').value.trim()
+        customerName: document.getElementById("customerName").value.trim(),
+        customerEmail: document.getElementById("customerEmail").value.trim(),
+        acknowledged: state.acknowledged ?? "",
+        valuedCustomer: state.valuedCustomer ?? "",
+        checkoutEase: state.checkoutEase ?? "",
+        neededHelp: state.neededHelp ?? "",
+        gotHelp: state.gotHelp ?? "",
+        extraComments: document.getElementById("extraComments").value.trim(),
+        teamMemberName: document.getElementById("teamMemberName").value.trim(),
+        recognitionComment: document.getElementById("recognitionComment").value.trim()
       };
 
-      console.log('Feedback payload:', payload);
-
-      // Replace this URL with your Google Apps Script Web App URL when ready.
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDetdcwnvmZT7uEj1OLxO8fUZHns523D9MblLWB3g7nApWyysRqc-3iquO8_BQvNqXBA/exec';
+      console.log(payload);
 
       if (!SCRIPT_URL) {
-        document.getElementById('status').textContent = 'Form captured locally. Add your Google Apps Script URL to send it to a Sheet.';
+        document.getElementById("status").textContent = "Ready to connect. Add your Google Apps Script URL in the code.";
         return;
       }
 
       try {
         await fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-        document.getElementById('status').textContent = 'Thanks, your feedback has been submitted.';
-        document.getElementById('feedbackForm').reset();
-        Object.keys(formState).forEach(key => delete formState[key]);
-        document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+
+        document.getElementById("feedbackForm").reset();
+        Object.keys(state).forEach(key => delete state[key]);
+        document.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
+        showPage(1);
+        document.getElementById("status").textContent = "Thanks, your feedback has been submitted.";
       } catch (error) {
-        document.getElementById('status').textContent = 'Something went wrong. Please try again.';
+        document.getElementById("status").textContent = "Something went wrong. Please try again.";
       }
     });
+
+    createScales();
+    createChoices();
   </script>
 </body>
 </html>
